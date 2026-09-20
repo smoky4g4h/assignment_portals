@@ -25,6 +25,21 @@ app.post('/assignments', async (req,res) => {
     }
 });
 
+app.get('/assignments', async (req, res) => {
+    try{
+        let result = await pool.query(
+            `SELECT * FROM assignments
+            ORDER BY id DESC;`
+        );
+        res.status(200).json(result.rows);
+    }catch(err){
+        console.log(err.message);
+        res.status(500).json({
+            errorMessage: 'Error when running Server .'
+        });
+    }
+});
+
 
 app.listen(PORT, () => {
     console.log(`server running on port ${PORT}`);
