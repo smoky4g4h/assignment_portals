@@ -87,6 +87,24 @@ app.delete('/assignments/:id', async(req, res) => {
     }
 });
 
+app.get('/assignments', async (req, res) => {
+    try{
+        const { submitted } = req.params;
+        let result = await pool.query(
+            `SELECT * FROM assignments
+                WHERE submitted = $1
+                    ORDER BY id DESC`,
+                    [submitted]
+        );
+        res.status(200).json(result.rows);
+    }catch(err){
+        console.log(err.message);
+        res.status(500).json({
+            errorMessage: 'Server is not running!!'
+        });
+    }
+}); 
+
 app.listen(PORT, () => {
     console.log(`server running on port ${PORT}`);
 })
