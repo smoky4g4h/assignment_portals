@@ -64,6 +64,28 @@ app.patch('/assignments/:id', async(req, res) => {
     }
 });
 
+app.delete('/assignments/:id', async(req, res) => {
+    try{
+        const { id } = req.params;
+        let result = await pool.query(
+            `DELETE FROM assignments
+                WHERE id = $1
+                 RETURNING *;`,
+            [id]
+        );
+        if(result.rows.length === 0){
+            return res.status(404).json({
+                errorMessage: 'Assignments Not present'
+            });
+        }
+        res.status(200).json(result.rows[0])
+    }catch(err){
+        console.log(err.message)
+        res.status(500).json({
+            errorMessage: 'Server is not running!'
+        });
+    }
+});
 
 app.listen(PORT, () => {
     console.log(`server running on port ${PORT}`);
